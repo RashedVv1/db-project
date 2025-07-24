@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Status Toggle App</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 10px;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Add User</h2>
+  <form id="userForm">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="number" name="age" placeholder="Age" required>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>User List</h2>
+  <table id="userTable">
+    <thead>
+      <tr><th>ID</th><th>Name</th><th>Age</th><th>Status</th><th>Action</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function fetchData() {
+      const res = await fetch('fetch.php');
+      const data = await res.text();
+      document.querySelector('#userTable tbody').innerHTML = data;
+    }
+
+    document.getElementById('userForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      await fetch('submit.php', {
+        method: 'POST',
+        body: formData
+      });
+      this.reset();
+      fetchData();
+    });
+
+    async function toggleStatus(id) {
+      await fetch(`toggle.php?id=${id}`);
+      fetchData();
+    }
+
+    window.onload = fetchData;
+  </script>
+</body>
+</html>
